@@ -1,0 +1,60 @@
+﻿@model IEnumerable<VideoGameStore.Models.Category>
+
+@{
+    ViewData["Title"] = "Manage Categories";
+}
+
+<h1>Manage Categories</h1>
+
+<hr />
+
+<h4>Add New Category</h4>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="Name" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+<hr />
+
+<h4>Existing Categories</h4>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th style="width: 180px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>
+                    <form asp-action="Edit" method="post" class="d-flex">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@category.Id" />
+                        <input name="Name" value="@category.Name" class="form-control me-2" />
+                        <button type="submit" class="btn btn-sm btn-success">
+                            Save
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="Delete" method="post"
+                          onsubmit="return confirm('Delete this category?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@category.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

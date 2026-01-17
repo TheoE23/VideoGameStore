@@ -1,0 +1,163 @@
+﻿@model IEnumerable<VideoGameStore.Models.Game>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Manage Games";
+    var developers = ViewBag.Developers as List<VideoGameStore.Models.Developer>;
+    var categories = ViewBag.Categories as List<VideoGameStore.Models.Category>;
+}
+
+<h1>Manage Games</h1>
+
+<hr />
+
+<h4>Add New Game</h4>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input name="Title" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Developer</label>
+        <select name="DeveloperId" class="form-select" required>
+            <option value="" disabled selected>-- Select Developer --</option>
+            @foreach (var dev in developers)
+            {
+                <option value="@dev.Id">@dev.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Categories</label>
+        @foreach (var cat in categories)
+        {
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="selectedCategories"
+                       value="@cat.Id" />
+                <label class="form-check-label">
+                    @cat.Name
+                </label>
+            </div>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price</label>
+        <input name="Price" class="form-control" placeholder="e.g. 59.99" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Published</label>
+        <select name="IsPublished" class="form-select">
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Add Game
+    </button>
+</form>
+
+<hr />
+
+@using System.Globalization
+
+<h4>Existing Games</h4>
+
+<table class="table table-striped align-top">
+    <thead>
+        <tr>
+            <th style="width: 15%;">Title</th>
+            <th style="width: 15%;">Developer</th>
+            <th style="width: 25%;">Categories</th>
+            <th style="width: 10%;">Price</th>
+            <th style="width: 10%;">Published</th>
+            <th style="width: 10%;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@game.Id" />
+
+                <td>
+                    <input name="Title"
+                           value="@game.Title"
+                           class="form-control" />
+                </td>
+
+                <td>
+                    <select name="DeveloperId" class="form-select">
+                        @foreach (var dev in developers)
+                        {
+                            <option value="@dev.Id"
+                                    selected="@(dev.Id == game.DeveloperId)">
+                                @dev.Name
+                            </option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+                    @foreach (var cat in categories)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="selectedCategories"
+                                   value="@cat.Id"
+                                   checked="@game.GameCategories.Any(gc => gc.CategoryId == cat.Id)" />
+                            <label class="form-check-label">
+                                @cat.Name
+                            </label>
+                        </div>
+                    }
+                </td>
+
+                <td>
+                    <input name="Price"
+                           value="@game.Price?.ToString("0.00", CultureInfo.InvariantCulture)"
+                           class="form-control" />
+                </td>
+
+                <td>
+                    <select name="IsPublished" class="form-select">
+                        <option value="true" selected="@game.IsPublished">Yes</option>
+                        <option value="false" selected="@(game.IsPublished == false)">No</option>
+                    </select>
+                </td>
+
+                <td>
+                    <div class="d-flex flex-column gap-2 align-items-start">
+                        <button type="submit"
+                                class="btn btn-sm btn-success">
+                            Save
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-sm btn-danger"
+                                formaction="@Url.Action("Delete")"
+                                formmethod="post"
+                                onclick="return confirm('Delete this game?');">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>
