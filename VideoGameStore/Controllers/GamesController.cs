@@ -129,14 +129,21 @@ namespace VideoGameStore.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Public(int page = 1)
+        public async Task<IActionResult> Public(int page = 1, int? categoryId = null)
         {
             const int pageSize = 12;
 
             var query = _context.Games
                 .Include(g => g.Developer)
                 .Include(g => g.GameCategories)
-                    .ThenInclude(gc => gc.Category);
+                    .ThenInclude(gc => gc.Category)
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(g =>
+                    g.GameCategories.Any(gc => gc.CategoryId == categoryId.Value));
+            }
 
             var totalGames = await query.CountAsync();
 
@@ -146,9 +153,15 @@ namespace VideoGameStore.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
+            var categories = await _context.Categories
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
             var viewModel = new PublicGamesViewModel
             {
                 Games = games,
+                Categories = categories,
+                SelectedCategoryId = categoryId,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalGames / (double)pageSize)
             };
