@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using VideoGameStore.Data;
 using VideoGameStore.Models;
 using VideoGameStore.Services.Games;
+using VideoGameStore.ViewModels;
 
 namespace VideoGameStore.Controllers
 {
@@ -125,6 +126,34 @@ namespace VideoGameStore.Controllers
             await _gameImportService.ImportTopGamesAsync(50);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Public(int page = 1)
+        {
+            const int pageSize = 12;
+
+            var query = _context.Games
+                .Include(g => g.Developer)
+                .Include(g => g.GameCategories)
+                    .ThenInclude(gc => gc.Category);
+
+            var totalGames = await query.CountAsync();
+
+            var games = await query
+                .OrderBy(g => g.Title)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var viewModel = new PublicGamesViewModel
+            {
+                Games = games,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalGames / (double)pageSize)
+            };
+
+            return View(viewModel);
         }
     }
 }

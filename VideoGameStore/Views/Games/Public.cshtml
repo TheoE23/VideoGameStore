@@ -1,0 +1,65 @@
+﻿@model VideoGameStore.ViewModels.PublicGamesViewModel
+
+@{
+    ViewData["Title"] = "Games";
+}
+
+<h1 class="mb-4">Games</h1>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    @foreach (var game in Model.Games)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@game.Title</h5>
+
+                    <p class="card-text">
+                        <strong>Developer:</strong>
+                        @game.Developer?.Name
+                    </p>
+
+                    <p class="card-text">
+                        <strong>Categories:</strong><br />
+                        @string.Join(", ",
+                        game.GameCategories.Select(gc => gc.Category.Name))
+                    </p>
+
+                @if (game.Price.HasValue)
+                    {
+                        <p class="card-text">
+                            <strong>Price:</strong>
+                            @game.Price.Value.ToString("0.00")
+                        </p>
+                    }
+                </div>
+                <div class="mt-auto text-end">
+                    <small class="text-muted">
+                        Released:
+                        <strong>@(game.IsPublished ? "Yes" : "No")</strong>
+                    </small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Public"
+                       asp-route-page="@i">
+                        @i
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </nav>
+}
