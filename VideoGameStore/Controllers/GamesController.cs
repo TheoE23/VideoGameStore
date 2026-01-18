@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VideoGameStore.Data;
 using VideoGameStore.Models;
+using VideoGameStore.Services.Games;
 
 namespace VideoGameStore.Controllers
 {
@@ -10,10 +11,12 @@ namespace VideoGameStore.Controllers
     public class GamesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IGameImportService _gameImportService;
 
-        public GamesController(ApplicationDbContext context)
+        public GamesController(ApplicationDbContext context, IGameImportService gameImportService)
         {
             _context = context;
+            _gameImportService = gameImportService;
         }
 
         public async Task<IActionResult> Index()
@@ -36,7 +39,6 @@ namespace VideoGameStore.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Re-populate data needed by the Index view
                 ViewBag.Developers = await _context.Developers.ToListAsync();
                 ViewBag.Categories = await _context.Categories.ToListAsync();
 
@@ -111,6 +113,16 @@ namespace VideoGameStore.Controllers
                 _context.Games.Remove(game);
                 await _context.SaveChangesAsync();
             }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ImportTopGames()
+        {
+            await _gameImportService.ImportTopGamesAsync(50);
 
             return RedirectToAction(nameof(Index));
         }

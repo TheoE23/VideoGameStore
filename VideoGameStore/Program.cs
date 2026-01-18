@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using VideoGameStore.Data;
 using VideoGameStore.Models;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using VideoGameStore.Services;
+using VideoGameStore.Services.Games;
+using VideoGameStore.Services.Rawg;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddRoles<IdentityRole>();
 
 builder.Services.AddTransient<IEmailSender, DummyEmailSender>();
+
+builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Rawg:BaseUrl"]!);
+});
+
+builder.Services.AddScoped<IGameImportService, GameImportService>();
 
 var app = builder.Build();
 

@@ -70,6 +70,16 @@
 
 <hr />
 
+<form asp-action="ImportTopGames" method="post" class="mb-3">
+    @Html.AntiForgeryToken()
+
+    <button type="submit"
+            class="btn btn-warning"
+            onclick="return confirm('Import top 50 games from RAWG?');">
+        Import Top 50 Games (RAWG)
+    </button>
+</form>
+
 @using System.Globalization
 
 <h4>Existing Games</h4>
