@@ -1,8 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="py-5">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-semibold mb-3">
+            Discover Video Games
+        </h1>
+
+        <p class="lead text-muted mb-4">
+            Browse titles, explore genres, and manage your catalog with ease
+        </p>
+
+        <a asp-controller="Games"
+           asp-action="Public"
+           class="btn btn-dark btn-lg px-4">
+            Browse Games
+        </a>
+    </div>
+
+    <div class="row g-4 mt-4">
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4">
+                <h5 class="fw-semibold mb-2">Browse Catalog</h5>
+                <p class="text-muted small mb-0">
+                    View games in a clean card layout with pagination
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4">
+                <h5 class="fw-semibold mb-2">Filter & Explore</h5>
+                <p class="text-muted small mb-0">
+                    Filter by category and developer to find what you like
+                </p>
+            </div>
+        </div>
+
+        @if (User.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
+        {
+            <div class="col-md-4">
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="text-decoration-none">
+                    <div class="card border-0 shadow-sm h-100 text-center p-4 admin-card">
+                        <h5 class="fw-semibold mb-2 text-warning">Admin Tools</h5>
+                        <p class="text-muted small mb-0">
+                            Manage games, categories and developers
+                        </p>
+                    </div>
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                    <h5 class="fw-semibold mb-2">Always Growing</h5>
+                    <p class="text-muted small mb-0">
+                        Import popular games automatically using the RAWG API
+                    </p>
+                </div>
+            </div>
+        }
+
+    </div>
+
 </div>

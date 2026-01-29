@@ -1,73 +1,97 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VideoGameStore</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VideoGameStore.styles.css" asp-append-version="true" />
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #f5f7fa 0%, #e9edf2 100%);
+            margin: 0;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .navbar-modern {
+            background: linear-gradient(90deg, #1e293b, #0f172a);
+        }
+
+            .navbar-modern .nav-link,
+            .navbar-modern .navbar-brand {
+                color: #e2e8f0 !important;
+            }
+
+                .navbar-modern .nav-link:hover {
+                    color: #ffffff !important;
+                }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+        }
+    </style>
 </head>
+
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VideoGameStore</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-sm navbar-modern shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">
+                    VideoGameStore
+                </a>
+
+                <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="navbar-collapse collapse d-sm-flex justify-content-between">
+                    <ul class="navbar-nav gap-2">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-controller="Games"
-                               asp-action="Public">
-                                Games
-                            </a>
+                            <a class="nav-link" asp-controller="Games" asp-action="Public">Games</a>
                         </li>
+
                         @if (User.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-controller="Admin"
-                                   asp-action="Index">
-                                    Admin Panel
-                                </a>
+                                <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
                             </li>
                         }
                     </ul>
+
                     <ul class="navbar-nav ms-auto">
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
                             <li class="nav-item">
-                                <form class="d-inline" asp-area="Identity"
-                                      asp-page="/Account/Logout"
-                                      method="post">
-                                    <button type="submit" class="nav-link btn btn-link text-dark">
-                                        Logout
-                                    </button>
+                                <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                    <button class="btn btn-outline-light btn-sm">Logout</button>
                                 </form>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-area="Identity"
-                                   asp-page="/Account/Login">
-                                    Login
-                                </a>
+                                <a class="btn btn-outline-light btn-sm me-2" asp-area="Identity" asp-page="/Account/Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-area="Identity"
-                                   asp-page="/Account/Register">
-                                    Register
-                                </a>
+                                <a class="btn btn-light btn-sm" asp-area="Identity" asp-page="/Account/Register">Register</a>
                             </li>
                         }
                     </ul>
@@ -75,20 +99,22 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - VideoGameStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <footer class="py-3">
+        <div class="container d-flex justify-content-between small">
+            <span>© 2026 VideoGameStore</span>
+            <a class="text-decoration-none text-light" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

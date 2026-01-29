@@ -18,5 +18,31 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+main {
+    background: #f6f7f9;
+    border-radius: 12px;
+}
+
+.card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.10);
+    }
+
+.navbar-brand {
+    letter-spacing: 0.4px;
+}
+
+.btn {
+    border-radius: 8px;
 }

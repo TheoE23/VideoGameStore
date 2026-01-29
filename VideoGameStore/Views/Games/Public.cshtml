@@ -7,29 +7,42 @@
 <h1 class="mb-4">Games</h1>
 
 <form method="get" asp-action="Public" class="mb-4">
-    <div class="row align-items-end">
-        <div class="col-md-4">
-            <label class="form-label">Filter by Category</label>
-            <select name="categoryId" class="form-select">
-                <option value="">All Categories</option>
+    <div class="row g-3 align-items-end">
 
-                @foreach (var category in Model.Categories)
+        <div class="col-md-4">
+            <label>Category</label>
+            <select name="categoryId" class="form-select">
+                <option value="">All</option>
+                @foreach (var c in Model.Categories)
                 {
-                    <option value="@category.Id"
-                            selected="@(category.Id == Model.SelectedCategoryId)">
-                        @category.Name
+                    <option value="@c.Id" selected="@(c.Id == Model.SelectedCategoryId)">
+                        @c.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label>Developer</label>
+            <select name="developerId" class="form-select">
+                <option value="">All</option>
+                @foreach (var d in Model.Developers)
+                {
+                    <option value="@d.Id" selected="@(d.Id == Model.SelectedDeveloperId)">
+                        @d.Name
                     </option>
                 }
             </select>
         </div>
 
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">
-                Filter
-            </button>
+            <button class="btn btn-primary w-100">Filter</button>
         </div>
+
     </div>
 </form>
+
+
 
 <div class="row row-cols-1 row-cols-md-4 g-4">
     @foreach (var game in Model.Games)
@@ -79,7 +92,8 @@
                     <a class="page-link"
                        asp-action="Public"
                        asp-route-page="@i"
-                       asp-route-categoryId="@Model.SelectedCategoryId">
+                       asp-route-categoryId="@Model.SelectedCategoryId"
+                       asp-route-developerId="@Model.SelectedDeveloperId">
                         @i
                     </a>
                 </li>

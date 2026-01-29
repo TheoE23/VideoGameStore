@@ -2,24 +2,70 @@
     ViewData["Title"] = "Admin Panel";
 }
 
-<h1>Admin Panel</h1>
+<div class="container py-4">
 
-<p>Administrative tools</p>
+    <div class="mb-5 text-center">
+        <h2 class="fw-semibold">Admin Panel</h2>
+        <p class="text-muted mb-0">
+            Manage your catalog data and administrative tools
+        </p>
+    </div>
 
-<ul>
-    <li>
-        <a asp-controller="Developers" asp-action="Index">
-            Manage Developers
-        </a>
-    </li>
-    <li>
-        <a asp-controller="Categories" asp-action="Index">
-            Manage Categories
-        </a>
-    </li>
-    <li>
-        <a asp-controller="Games" asp-action="Index">
-            Manage Games
-        </a>
-    </li>
-</ul>
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <a asp-controller="Developers" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 admin-card">
+                    <div class="card-body text-center p-5">
+                        <h5 class="fw-semibold mb-2">Developers</h5>
+                        <p class="text-muted small mb-0">
+                            Create, edit and remove developers
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-controller="Categories" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 admin-card">
+                    <div class="card-body text-center p-5">
+                        <h5 class="fw-semibold mb-2">Categories</h5>
+                        <p class="text-muted small mb-0">
+                            Manage genres and classifications
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-controller="Games" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 admin-card">
+                    <div class="card-body text-center p-5">
+                        <h5 class="fw-semibold mb-2">Games</h5>
+                        <p class="text-muted small mb-0">
+                            Edit catalog entries and metadata
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .admin-card {
+        transition: transform .15s ease, box-shadow .15s ease;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+        .admin-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+            background: #f8fafc;
+        }
+</style>
