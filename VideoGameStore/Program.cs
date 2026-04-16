@@ -62,8 +62,13 @@ using (var scope = app.Services.CreateScope())
         await roleManager.CreateAsync(new IdentityRole("Admin"));
     }
 
+    if (!await roleManager.RoleExistsAsync("Moderator"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Moderator"));
+    }
+
     string adminName = "admin@test.com";
-    string adminPassword = "Admin1@";
+    string adminPassword = "Admin1@";   
 
     var adminUser = await userManager.FindByNameAsync(adminName);
     if (adminUser == null)
@@ -79,6 +84,32 @@ using (var scope = app.Services.CreateScope())
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }
+    }
+
+    string modName = "mod@test.com";
+    string modPassword = "Moderator1!";
+
+    var modUser = await userManager.FindByNameAsync(modName);
+
+    if (modUser == null)
+    {
+        modUser = new ApplicationUser
+        {
+            Name = modName,
+            UserName = modName,
+        };
+
+        await userManager.CreateAsync(modUser, modPassword);
+    }
+
+    if (!await userManager.IsInRoleAsync(modUser, "Moderator"))
+    {
+        await userManager.AddToRoleAsync(modUser, "Moderator");
+    }
+
+    if (await userManager.IsInRoleAsync(modUser, "Admin"))
+    {
+        await userManager.RemoveFromRoleAsync(modUser, "Admin");
     }
 }
 

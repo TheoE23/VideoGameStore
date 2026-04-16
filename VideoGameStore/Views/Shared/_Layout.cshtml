@@ -68,7 +68,7 @@
                             <a class="nav-link" asp-controller="Games" asp-action="Public">Games</a>
                         </li>
 
-                        @if (User.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
+                        @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>

@@ -10,7 +10,7 @@ using VideoGameStore.ViewModels;
 
 namespace VideoGameStore.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class GamesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -18,7 +18,11 @@ namespace VideoGameStore.Controllers
         private readonly IReviewService _reviewService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public GamesController(ApplicationDbContext context, IGameImportService gameImportService, IReviewService reviewService, UserManager<ApplicationUser> userManager)
+        public GamesController(
+            ApplicationDbContext context,
+            IGameImportService gameImportService,
+            IReviewService reviewService,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _gameImportService = gameImportService;
@@ -26,6 +30,7 @@ namespace VideoGameStore.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var games = await _context.Games
@@ -40,6 +45,7 @@ namespace VideoGameStore.Controllers
             return View(games);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Game game, int[] selectedCategories)
@@ -72,7 +78,7 @@ namespace VideoGameStore.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Game game, int[] selectedCategories)
@@ -85,9 +91,7 @@ namespace VideoGameStore.Controllers
                 return NotFound();
 
             if (!ModelState.IsValid)
-            {
                 return RedirectToAction(nameof(Index));
-            }
 
             existingGame.Title = game.Title;
             existingGame.Price = game.Price;
@@ -95,6 +99,7 @@ namespace VideoGameStore.Controllers
             existingGame.DeveloperId = game.DeveloperId;
 
             existingGame.GameCategories.Clear();
+
             foreach (var categoryId in selectedCategories)
             {
                 existingGame.GameCategories.Add(new GameCategory
@@ -108,13 +113,13 @@ namespace VideoGameStore.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var game = await _context.Games.FindAsync(id);
+
             if (game != null)
             {
                 _context.Games.Remove(game);
@@ -124,13 +129,12 @@ namespace VideoGameStore.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportTopGames()
         {
             await _gameImportService.ImportTopGamesAsync(50);
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -164,13 +168,8 @@ namespace VideoGameStore.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            var categories = await _context.Categories
-                .OrderBy(c => c.Name)
-                .ToListAsync();
-
-            var developers = await _context.Developers
-                .OrderBy(d => d.Name)
-                .ToListAsync();
+            var categories = await _context.Categories.OrderBy(c => c.Name).ToListAsync();
+            var developers = await _context.Developers.OrderBy(d => d.Name).ToListAsync();
 
             var viewModel = new PublicGamesViewModel
             {
@@ -209,11 +208,14 @@ namespace VideoGameStore.Controllers
             return View(vm);
         }
 
-        [AllowAnonymous]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddReview(GameDetailsViewModel model)
         {
             var userId = _userManager.GetUserId(User);
+
+            if (userId == null)
+                return Unauthorized();
 
             await _reviewService.AddReviewAsync(
                 model.Game.Id,
@@ -223,6 +225,20 @@ namespace VideoGameStore.Controllers
             );
 
             return RedirectToAction("Details", new { id = model.Game.Id });
+        }
+
+        [Authorize(Roles = "Moderator")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReportReview(int reviewId, string reason)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            await _reviewService.ReportReviewAsync(reviewId, userId, reason);
+
+            TempData["Success"] = "Review reported successfully.";
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
     }
 }

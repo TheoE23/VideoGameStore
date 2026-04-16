@@ -1,0 +1,62 @@
+﻿@model List<ReviewReport>
+
+<h2>Review Reports</h2>
+
+@if (!Model.Any())
+{
+    <p>No reports.</p>
+}
+else
+{
+    foreach (var report in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <p>
+                    <strong>Reported Review:</strong><br />
+                    @report.Review.Content
+                </p>
+
+                <p>
+                    <strong>Rating:</strong> @report.Review.Rating / 5
+                </p>
+
+                <p>
+                    <strong>Reported By:</strong>
+                    @report.Reporter?.UserName
+                </p>
+
+                <p>
+                    <strong>Reason:</strong>
+                    @report.Reason
+                </p>
+
+                <p>
+                    <small>
+                        Reported at: @report.CreatedAt
+                    </small>
+                </p>
+
+                <div class="d-flex gap-2">
+
+                    <form asp-action="DeleteReview" method="post">
+                        <input type="hidden" name="reviewId" value="@report.ReviewId" />
+                        <button class="btn btn-danger btn-sm">
+                            Delete Review
+                        </button>
+                    </form>
+
+                    <form asp-action="ResolveReport" method="post">
+                        <input type="hidden" name="id" value="@report.Id" />
+                        <button class="btn btn-success btn-sm">
+                            Mark Resolved
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    }
+}

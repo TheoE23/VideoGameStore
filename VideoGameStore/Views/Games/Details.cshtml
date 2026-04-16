@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = Model.Game.Title;
 }
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
 
 <div class="container mt-4">
 
@@ -48,27 +54,31 @@
             {
                 @foreach (var review in Model.Reviews)
                 {
-                    <div class="border rounded p-3 mb-3 bg-light">
-
-                        <div class="d-flex justify-content-between">
+                    <div class="card mb-2">
+                        <div class="card-body">
                             <strong>@review.User?.UserName</strong>
-                            <span class="text-warning">
-                                @for (int i = 1; i <= 5; i++)
-                                {
-                                    if (i <= review.Rating)
-                                    {
-                                        <span>★</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">★</span>
-                                    }
-                                }
-                            </span>
+                            <span> - @review.Rating / 5</span>
+
+                            <p>@review.Content</p>
+
+                            @if (User.IsInRole("Moderator") || User.IsInRole("Admin"))
+                            {
+                                <form asp-action="ReportReview" method="post" class="mt-2">
+                                    <input type="hidden" name="reviewId" value="@review.Id" />
+
+                                    <select name="reason" class="form-control">
+                                        <option>Spam</option>
+                                        <option>Offensive</option>
+                                        <option>Harassment</option>
+                                        <option>Other</option>
+                                    </select>
+
+                                    <button class="btn btn-sm btn-danger">
+                                        Report
+                                    </button>
+                                </form>
+                            }
                         </div>
-
-                        <p class="mb-0 mt-2">@review.Content</p>
-
                     </div>
                 }
             }
