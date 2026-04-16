@@ -16,6 +16,8 @@ namespace VideoGameStore.Data
         public DbSet<Developer> Developers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<GameCategory> GameCategories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<ReviewReport> ReviewReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,6 +35,12 @@ namespace VideoGameStore.Data
                 .HasOne(gc => gc.Category)
                 .WithMany(c => c.GameCategories)
                 .HasForeignKey(gc => gc.CategoryId);
+
+            builder.Entity<Review>()
+                .HasOne(r => r.Game)
+                .WithMany()
+                .HasForeignKey(r => r.GameId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

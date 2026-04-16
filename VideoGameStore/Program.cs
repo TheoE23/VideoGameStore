@@ -6,6 +6,7 @@ using VideoGameStore.Models;
 using VideoGameStore.Services;
 using VideoGameStore.Services.Games;
 using VideoGameStore.Services.Rawg;
+using VideoGameStore.Services.Reviews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,7 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 });
 
 builder.Services.AddScoped<IGameImportService, GameImportService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 var app = builder.Build();
 

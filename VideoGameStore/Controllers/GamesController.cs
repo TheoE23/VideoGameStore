@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VideoGameStore.Data;
 using VideoGameStore.Models;
 using VideoGameStore.Services.Games;
+using VideoGameStore.Services.Reviews;
 using VideoGameStore.ViewModels;
 
 namespace VideoGameStore.Controllers
@@ -13,11 +15,15 @@ namespace VideoGameStore.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IGameImportService _gameImportService;
+        private readonly IReviewService _reviewService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GamesController(ApplicationDbContext context, IGameImportService gameImportService)
+        public GamesController(ApplicationDbContext context, IGameImportService gameImportService, IReviewService reviewService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _gameImportService = gameImportService;
+            _reviewService = reviewService;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -178,6 +184,45 @@ namespace VideoGameStore.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(int id)
+        {
+            var game = await _context.Games
+                .Include(g => g.Developer)
+                .Include(g => g.GameCategories)
+                    .ThenInclude(gc => gc.Category)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (game == null)
+                return NotFound();
+
+            var reviews = await _reviewService.GetGameReviewsAsync(id);
+
+            var vm = new GameDetailsViewModel
+            {
+                Game = game,
+                Reviews = reviews.ToList()
+            };
+
+            return View(vm);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> AddReview(GameDetailsViewModel model)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            await _reviewService.AddReviewAsync(
+                model.Game.Id,
+                userId,
+                model.NewReviewContent,
+                model.NewReviewRating
+            );
+
+            return RedirectToAction("Details", new { id = model.Game.Id });
         }
     }
 }
