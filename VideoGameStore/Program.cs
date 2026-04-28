@@ -5,6 +5,7 @@ using VideoGameStore.Data;
 using VideoGameStore.Models;
 using VideoGameStore.Services;
 using VideoGameStore.Services.Games;
+using VideoGameStore.Services.Payments;
 using VideoGameStore.Services.Rawg;
 using VideoGameStore.Services.Reviews;
 
@@ -38,8 +39,11 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
     client.BaseAddress = new Uri(builder.Configuration["Rawg:BaseUrl"]!);
 });
 
+builder.Services.AddHttpClient<IPaymentService, PayPalService>();
+
 builder.Services.AddScoped<IGameImportService, GameImportService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+
 
 var app = builder.Build();
 

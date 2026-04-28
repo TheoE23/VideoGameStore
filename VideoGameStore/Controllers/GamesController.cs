@@ -199,10 +199,22 @@ namespace VideoGameStore.Controllers
 
             var reviews = await _reviewService.GetGameReviewsAsync(id);
 
+            var userId = _userManager.GetUserId(User);
+
+            var purchases = new List<Purchase>();
+
+            if (userId != null)
+            {
+                purchases = await _context.Purchases
+                    .Where(p => p.UserId == userId)
+                    .ToListAsync();
+            }
+
             var vm = new GameDetailsViewModel
             {
                 Game = game,
-                Reviews = reviews.ToList()
+                Reviews = reviews.ToList(),
+                Purchases = purchases
             };
 
             return View(vm);

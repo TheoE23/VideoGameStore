@@ -9,5 +9,7 @@ namespace VideoGameStore.ViewModels
 
         public string NewReviewContent { get; set; }
         public int NewReviewRating { get; set; }
+
+        public List<Purchase> Purchases { get; set; } = new();
     }
 }

@@ -2,7 +2,9 @@
 
 @{
     ViewData["Title"] = Model.Game.Title;
+    var alreadyOwned = Model.Purchases.Any(p => p.GameId == Model.Game.Id);
 }
+
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success">
@@ -36,6 +38,27 @@
                         <h4 class="text-muted">Free</h4>
                     }
                 </div>
+                @if (alreadyOwned)
+                {
+                    <div class="alert alert-success mt-2">
+                        You already own this game.
+                    </div>
+                }
+                else if (Model.Game.Price.HasValue)
+                {
+                    <form asp-controller="Payments" asp-action="CreateOrder" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="gameId" value="@Model.Game.Id" />
+
+                        <button class="btn btn-success">
+                            Buy for $@Model.Game.Price.Value.ToString("0.00")
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <p class="text-muted">Not available for purchase</p>
+                }
             </div>
 
         </div>

@@ -19,6 +19,8 @@ namespace VideoGameStore.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ReviewReport> ReviewReports { get; set; }
 
+        public DbSet<Purchase> Purchases { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

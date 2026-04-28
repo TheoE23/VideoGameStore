@@ -68,6 +68,16 @@
                             <a class="nav-link" asp-controller="Games" asp-action="Public">Games</a>
                         </li>
 
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Payments" asp-action="MyPurchases">
+                                    My Purchases
+                                </a>
+                            </li>
+                        }
+
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
