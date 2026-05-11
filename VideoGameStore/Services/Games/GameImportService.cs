@@ -48,6 +48,7 @@ namespace VideoGameStore.Services.Games
                     Title = details.Name,
                     RawgGameId = details.Id,
                     DeveloperId = developer?.Id ?? 0,
+                    ImageUrl = details.Background_Image,
                     IsPublished = false
                 };
 
@@ -72,6 +73,22 @@ namespace VideoGameStore.Services.Games
                 _context.Games.Add(game);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task RefreshGameImagesAsync()
+        {
+            var games = await _context.Games
+                .Where(g => g.RawgGameId != null)
+                .ToListAsync();
+
+            foreach (var game in games)
+            {
+                var rawgDetails = await _rawgClient.GetGameDetailsAsync(game.RawgGameId.Value);
+
+                game.ImageUrl = rawgDetails.Background_Image;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

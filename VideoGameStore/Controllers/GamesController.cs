@@ -138,6 +138,17 @@ namespace VideoGameStore.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshImages()
+        {
+            await _gameImportService.RefreshGameImagesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         [AllowAnonymous]
         public async Task<IActionResult> Public(int page = 1, int? categoryId = null, int? developerId = null)
         {

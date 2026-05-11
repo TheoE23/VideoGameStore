@@ -80,6 +80,14 @@
     </button>
 </form>
 
+<form asp-action="RefreshImages" method="post">
+    @Html.AntiForgeryToken()
+
+    <button class="btn btn-warning">
+        Refresh RAWG Images
+    </button>
+</form>
+
 <h4>Existing Games</h4>
 
 <table class="table table-striped align-top">

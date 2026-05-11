@@ -14,10 +14,34 @@
 
 <div class="container mt-4">
 
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm border-0 overflow-hidden mb-4">
+
+        @if (!string.IsNullOrEmpty(Model.Game.ImageUrl))
+        {
+            <div class="position-relative">
+
+                <img src="@Model.Game.ImageUrl"
+                     class="w-100 details-banner"
+                     alt="@Model.Game.Title" />
+
+                <div class="details-overlay"></div>
+
+                <div class="details-title position-absolute bottom-0 start-0 p-4 text-white">
+                    <h1 class="fw-bold mb-2">
+                        @Model.Game.Title
+                    </h1>
+
+                    <p class="mb-0 opacity-75">
+                        @Model.Game.Developer?.Name
+                    </p>
+                </div>
+
+            </div>
+        }
+
         <div class="card-body">
 
-            <h2 class="mb-3">@Model.Game.Title</h2>
+            
 
             <div class="row">
                 <div class="col-md-6">
@@ -150,3 +174,22 @@
     }
 
 </div>
+
+<style>
+
+    .details-banner {
+        height: 380px;
+        object-fit: cover;
+    }
+
+    .details-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( to top, rgba(0,0,0,0.75), rgba(0,0,0,0.1) );
+    }
+
+    .details-title {
+        z-index: 2;
+    }
+
+</style>

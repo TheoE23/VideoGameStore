@@ -2,71 +2,112 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="py-5">
+<section class="hero-section rounded-4 overflow-hidden position-relative mb-5">
 
-    <div class="text-center mb-5">
-        <h1 class="display-5 fw-semibold mb-3">
-            Discover Video Games
+    <img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1600"
+         class="hero-image" />
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content text-center text-white">
+        <h1 class="display-3 fw-bold mb-3">
+            Discover Your Next Adventure
         </h1>
 
-        <p class="lead text-muted mb-4">
-            Browse titles, explore genres, and manage your catalog with ease
+        <p class="lead mb-4">
+            Browse, purchase, and review the world's best games.
         </p>
 
         <a asp-controller="Games"
            asp-action="Public"
-           class="btn btn-dark btn-lg px-4">
+           class="btn btn-primary btn-lg px-5 py-3 rounded-4 shadow">
             Browse Games
         </a>
     </div>
 
-    <div class="row g-4 mt-4">
+</section>
+
+<section class="mb-5">
+    <div class="row g-4">
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100 text-center p-4">
-                <h5 class="fw-semibold mb-2">Browse Catalog</h5>
-                <p class="text-muted small mb-0">
-                    View games in a clean card layout with pagination
+            <div class="feature-card h-100">
+                <div class="feature-icon">🎮</div>
+                <h4>Massive Library</h4>
+                <p>
+                    Explore dozens of popular titles.
                 </p>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100 text-center p-4">
-                <h5 class="fw-semibold mb-2">Filter & Explore</h5>
-                <p class="text-muted small mb-0">
-                    Filter by category and developer to find what you like
+            <div class="feature-card h-100">
+                <div class="feature-icon">⭐</div>
+                <h4>Reviews & Ratings</h4>
+                <p>
+                    Share your thoughts and discover community favourites.
                 </p>
             </div>
         </div>
 
-        @if (User.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
-        {
-            <div class="col-md-4">
-                <a asp-controller="Admin"
-                   asp-action="Index"
-                   class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 text-center p-4 admin-card">
-                        <h5 class="fw-semibold mb-2 text-warning">Admin Tools</h5>
-                        <p class="text-muted small mb-0">
-                            Manage games, categories and developers
-                        </p>
-                    </div>
-                </a>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="feature-icon">💳</div>
+                <h4>Secure Purchases</h4>
+                <p>
+                    Purchase games safely using integrated PayPal checkout.
+                </p>
             </div>
-        }
-        else
-        {
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100 text-center p-4">
-                    <h5 class="fw-semibold mb-2">Always Growing</h5>
-                    <p class="text-muted small mb-0">
-                        Import popular games automatically using the RAWG API
-                    </p>
-                </div>
-            </div>
-        }
+        </div>
 
     </div>
+</section>
 
-</div>
+<style>
+    .hero-section {
+        height: 520px;
+        position: relative;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.75) );
+    }
+
+    .hero-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .feature-card {
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 2rem;
+        color: #e2e8f0;
+        transition: 0.25s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+        }
+
+    .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+</style>

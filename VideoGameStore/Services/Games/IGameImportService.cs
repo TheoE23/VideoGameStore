@@ -3,5 +3,7 @@
     public interface IGameImportService
     {
         Task ImportTopGamesAsync(int count);
+
+        Task RefreshGameImagesAsync();
     }
 }

@@ -1,6 +1,65 @@
 ﻿@model Game
 
-<h2>Purchase Successful</h2>
+@{
+    ViewData["Title"] = "Purchase Successful";
+}
 
-<p>You bought: <strong>@Model.Title</strong></p>
-<p>Price: $@Model.Price</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow border-0">
+                <div class="card-body text-center p-5">
+
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success"
+                           style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h1 class="fw-bold mb-3 text-success">
+                        Purchase Successful
+                    </h1>
+
+                    <p class="lead text-muted mb-4">
+                        Thank you for your purchase!
+                    </p>
+
+                    <hr class="my-4" />
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl"
+                             class="img-fluid rounded shadow-sm mb-4"
+                             style="max-height: 320px; object-fit: cover;" />
+                    }
+
+                    <h3 class="fw-semibold mb-3">
+                        @Model.Title
+                    </h3>
+
+                    <p class="fs-4 text-success fw-bold mb-4">
+                        $@Model.Price?.ToString("0.00")
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3">
+
+                        <a asp-controller="Payments"
+                           asp-action="MyPurchases"
+                           class="btn btn-success px-4">
+                            View My Purchases
+                        </a>
+
+                        <a asp-controller="Games"
+                           asp-action="Public"
+                           class="btn btn-outline-secondary px-4">
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -11,6 +11,8 @@
         public bool IsPublished { get; set; } = true;
         public decimal? Price { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public int DeveloperId { get; set; }
         public Developer? Developer { get; set; } = null!;
 

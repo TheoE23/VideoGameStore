@@ -1,1 +1,48 @@
-﻿<h2>Payment Cancelled</h2>
+﻿@{
+    ViewData["Title"] = "Payment Cancelled";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow border-0">
+                <div class="card-body text-center p-5">
+
+                    <div class="mb-4">
+                        <i class="bi bi-x-circle-fill text-danger"
+                           style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h1 class="fw-bold mb-3 text-danger">
+                        Payment Cancelled
+                    </h1>
+
+                    <p class="lead text-muted mb-4">
+                        Your transaction was cancelled and no payment was taken.
+                    </p>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-center gap-3">
+
+                        <a asp-controller="Games"
+                           asp-action="Public"
+                           class="btn btn-primary px-4">
+                            Back to Store
+                        </a>
+
+                        <a asp-controller="Payments"
+                           asp-action="MyPurchases"
+                           class="btn btn-outline-secondary px-4">
+                            My Purchases
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

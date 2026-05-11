@@ -53,7 +53,14 @@
                asp-route-id="@game.Id"
                class="text-decoration-none text-dark">
 
-                <div class="card h-100">
+                <div class="card h-100 shadow-sm game-card border-0">
+
+                    @if (!string.IsNullOrEmpty(game.ImageUrl))
+                    {
+                        <img src="@game.ImageUrl"
+                             class="card-img-top"
+                             style="height: 220px; object-fit: cover;" />
+                    }
 
                     <div class="card-body">
                         <h5 class="card-title">@game.Title</h5>
