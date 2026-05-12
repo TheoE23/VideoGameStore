@@ -1,73 +1,182 @@
-﻿@{
+﻿@model List<Game>
+
+@{
     ViewData["Title"] = "Home";
 }
 
-<section class="hero-section rounded-4 overflow-hidden position-relative mb-5">
+<section class="hero-section overflow-hidden position-relative mb-5">
 
-    <img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1600"
-         class="hero-image" />
+    <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f208a0b1-b95d-4e18-9279-dc040bc0300c/d6zy5m0-8cf85eaf-2d93-4725-b6ad-171adb19e8ad.jpg/v1/fill/w_960,h_305,q_75,strp/games_collage_for_group_banner__1_by_thinkstoomuch_d6zy5m0-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MzA1IiwicGF0aCI6Ii9mL2YyMDhhMGIxLWI5NWQtNGUxOC05Mjc5LWRjMDQwYmMwMzAwYy9kNnp5NW0wLThjZjg1ZWFmLTJkOTMtNDcyNS1iNmFkLTE3MWFkYjE5ZThhZC5qcGciLCJ3aWR0aCI6Ijw9OTYwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.gWL8sNgq2EsEcEH9nLEAKQPUnNwBxM19s8k8LpirbKs"
+         class="hero-image"
+         alt="NovaPlay Banner" />
 
     <div class="hero-overlay"></div>
 
-    <div class="hero-content text-center text-white">
-        <h1 class="display-3 fw-bold mb-3">
+    <div class="hero-content text-white">
+
+        <h1 class="hero-title mb-3">
             Discover Your Next Adventure
         </h1>
 
-        <p class="lead mb-4">
-            Browse, purchase, and review the world's best games.
+        <p class="hero-subtitle mb-4">
+            Browse, purchase, and review some of the world's most popular games.
         </p>
 
-        <a asp-controller="Games"
-           asp-action="Public"
-           class="btn btn-primary btn-lg px-5 py-3 rounded-4 shadow">
-            Browse Games
-        </a>
+        <div class="d-flex gap-3 flex-wrap justify-content-center">
+            <a asp-controller="Games"
+               asp-action="Public"
+               class="btn btn-primary btn-lg px-5 py-3 rounded-4 shadow-lg">
+                Browse Games
+            </a>
+
+            <a asp-controller="Payments"
+               asp-action="MyPurchases"
+               class="btn btn-outline-light btn-lg px-5 py-3 rounded-4">
+                My Library
+            </a>
+        </div>
+
     </div>
 
 </section>
 
 <section class="mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Featured Games</h2>
+
+            <p class="text-muted mb-0">
+                Explore some of the biggest titles available on NovaPlay.
+            </p>
+        </div>
+
+        <a asp-controller="Games"
+           asp-action="Public"
+           class="btn btn-dark rounded-4 px-4">
+            View All
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        @foreach (var game in Model)
+        {
+            <div class="col-lg-4">
+
+                <a asp-controller="Games"
+                   asp-action="Details"
+                   asp-route-id="@game.Id"
+                   class="text-decoration-none text-dark">
+
+                    <div class="showcase-card h-100">
+
+                        @if (!string.IsNullOrEmpty(game.ImageUrl))
+                        {
+                            <img src="@game.ImageUrl"
+                                 class="showcase-image"
+                                 alt="@game.Title" />
+                        }
+
+                        <div class="showcase-content">
+
+                            <span class="showcase-tag">
+                                @(game.GameCategories.FirstOrDefault()?.Category?.Name ?? "Game")
+                            </span>
+
+                            <h3>@game.Title</h3>
+
+                            <p>
+                                @(game.Developer?.Name ?? "Popular title available now on NovaPlay.")
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</section>
+
+<section class="mb-5">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold mb-2">
+            Why NovaPlay?
+        </h2>
+
+        <p class="text-muted">
+            Built for discovering, reviewing, and managing your favourite games.
+        </p>
+    </div>
+
     <div class="row g-4">
 
         <div class="col-md-4">
             <div class="feature-card h-100">
-                <div class="feature-icon">🎮</div>
+
+                <div class="feature-icon">
+                    <i class="bi bi-controller"></i>
+                </div>
+
                 <h4>Massive Library</h4>
+
                 <p>
-                    Explore dozens of popular titles.
+                    Explore dozens of popular titles across multiple genres.
                 </p>
+
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="feature-card h-100">
-                <div class="feature-icon">⭐</div>
+
+                <div class="feature-icon">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+
                 <h4>Reviews & Ratings</h4>
+
                 <p>
-                    Share your thoughts and discover community favourites.
+                    Rate games and discover top community picks.
                 </p>
+
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="feature-card h-100">
-                <div class="feature-icon">💳</div>
+
+                <div class="feature-icon">
+                    <i class="bi bi-credit-card-2-front-fill"></i>
+                </div>
+
                 <h4>Secure Purchases</h4>
+
                 <p>
                     Purchase games safely using integrated PayPal checkout.
                 </p>
+
             </div>
         </div>
 
     </div>
+
 </section>
 
 <style>
+
     .hero-section {
-        height: 520px;
+        height: 560px;
+        border-radius: 28px;
         position: relative;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.35);
     }
 
     .hero-image {
@@ -79,7 +188,7 @@
     .hero-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient( to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.75) );
+        background: linear-gradient( to right, rgba(2,6,23,0.82), rgba(2,6,23,0.35) ), linear-gradient( to top, rgba(0,0,0,0.65), rgba(0,0,0,0.1) );
     }
 
     .hero-content {
@@ -88,18 +197,75 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-        padding: 2rem;
+        align-items: flex-start;
+        padding: 5rem;
+        max-width: 760px;
+    }
+
+    .hero-title {
+        font-size: 4.2rem;
+        font-weight: 800;
+        line-height: 1.05;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.82);
+        max-width: 600px;
+    }
+
+    .showcase-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        transition: 0.25s ease;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        height: 100%;
+    }
+
+        .showcase-card:hover {
+            transform: translateY(-6px);
+        }
+
+    .showcase-image {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+    }
+
+    .showcase-content {
+        padding: 1.5rem;
+    }
+
+    .showcase-tag {
+        display: inline-block;
+        margin-bottom: 0.8rem;
+        background: #dbeafe;
+        color: #2563eb;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+    }
+
+    .showcase-content h3 {
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .showcase-content p {
+        color: #64748b;
+        margin-bottom: 0;
     }
 
     .feature-card {
-        background: rgba(15, 23, 42, 0.75);
+        background: linear-gradient( 145deg, rgba(30,41,59,0.95), rgba(51,65,85,0.92) );
         border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 20px;
+        border-radius: 24px;
         padding: 2rem;
         color: #e2e8f0;
         transition: 0.25s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
     }
 
         .feature-card:hover {
@@ -109,5 +275,29 @@
     .feature-icon {
         font-size: 2rem;
         margin-bottom: 1rem;
+        color: #60a5fa;
     }
+
+    .feature-card p {
+        color: #cbd5e1;
+        margin-bottom: 0;
+    }
+
+    @@media (max-width: 992px) {
+
+        .hero-content {
+            align-items: center;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+        }
+
+        .hero-section {
+            height: 500px;
+        }
+    }
+
 </style>

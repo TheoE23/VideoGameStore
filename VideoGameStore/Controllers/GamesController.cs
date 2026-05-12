@@ -31,16 +31,31 @@ namespace VideoGameStore.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var games = await _context.Games
+            const int pageSize = 10;
+
+            var query = _context.Games
                 .Include(g => g.Developer)
                 .Include(g => g.GameCategories)
                     .ThenInclude(gc => gc.Category)
+                .OrderBy(g => g.Title)
+                .AsQueryable();
+
+            var totalGames = await query.CountAsync();
+
+            var games = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             ViewBag.Developers = await _context.Developers.ToListAsync();
             ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            ViewBag.CurrentPage = page;
+
+            ViewBag.TotalPages =
+                (int)Math.Ceiling(totalGames / (double)pageSize);
 
             return View(games);
         }
@@ -150,7 +165,7 @@ namespace VideoGameStore.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Public(int page = 1, int? categoryId = null, int? developerId = null)
+        public async Task<IActionResult> Public(int page = 1, int? categoryId = null, int? developerId = null, string? searchTerm = null)
         {
             const int pageSize = 12;
 
@@ -169,6 +184,12 @@ namespace VideoGameStore.Controllers
             if (developerId.HasValue)
             {
                 query = query.Where(g => g.DeveloperId == developerId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(g =>
+                    g.Title.ToLower().Contains(searchTerm.ToLower()));
             }
 
             var totalGames = await query.CountAsync();
@@ -190,6 +211,7 @@ namespace VideoGameStore.Controllers
                 Developers = developers,
                 SelectedDeveloperId = developerId,
                 CurrentPage = page,
+                SearchTerm = searchTerm,
                 TotalPages = (int)Math.Ceiling(totalGames / (double)pageSize)
             };
 

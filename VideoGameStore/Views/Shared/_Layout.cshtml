@@ -185,10 +185,16 @@
         <nav class="navbar navbar-expand-lg navbar-modern sticky-top shadow-sm">
 
             <div class="container-fluid px-4 px-lg-5">
-                <a class="navbar-brand"
+                <a class="navbar-brand d-flex align-items-center gap-2"
                    asp-controller="Home"
                    asp-action="Index">
-                    🎮 NovaPlay
+
+                    <img src="~/images/Novaplay logo.png"
+                         asp-append-version="true"
+                         alt="NovaPlay Logo"
+                         style="height: 55px; width: auto;" />
+
+                    <span>NovaPlay</span>
                 </a>
                 <button class="navbar-toggler bg-light"
                         type="button"

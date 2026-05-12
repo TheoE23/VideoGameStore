@@ -10,6 +10,16 @@
     <div class="row g-3 align-items-end">
 
         <div class="col-md-4">
+            <label class="form-label">Search</label>
+
+            <input type="text"
+                   name="searchTerm"
+                   value="@Model.SearchTerm"
+                   class="form-control"
+                   placeholder="Search games..." />
+        </div>
+
+        <div class="col-md-4">
             <label>Category</label>
             <select name="categoryId" class="form-select">
                 <option value="">All</option>

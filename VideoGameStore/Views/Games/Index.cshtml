@@ -88,92 +88,216 @@
     </button>
 </form>
 
-<h4>Existing Games</h4>
+<h4 class="pt-2 mb-4">Existing Games</h4>
 
-<table class="table table-striped align-top">
-    <thead>
-        <tr>
-            <th style="width: 15%;">Title</th>
-            <th style="width: 15%;">Developer</th>
-            <th style="width: 25%;">Categories</th>
-            <th style="width: 10%;">Price</th>
-            <th style="width: 10%;">Published</th>
-            <th style="width: 10%;">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var game in Model)
-        {
-            <tr>
-                <form asp-action="Edit" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="Id" value="@game.Id" />
+<div class="d-flex flex-column gap-3">
 
-                <td>
-                    <input name="Title"
-                           value="@game.Title"
-                           class="form-control" />
-                </td>
+    @foreach (var game in Model)
+    {
+        <div class="card shadow-sm border-0">
 
-                <td>
-                    <select name="DeveloperId" class="form-select">
-                        @foreach (var dev in developers)
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        @if (!string.IsNullOrEmpty(game.ImageUrl))
                         {
-                            <option value="@dev.Id"
-                                    selected="@(dev.Id == game.DeveloperId)">
-                                @dev.Name
-                            </option>
+                            <img src="@game.ImageUrl"
+                                 style="width: 120px; height: 70px; object-fit: cover; border-radius: 10px;" />
                         }
-                    </select>
-                </td>
 
-                <td>
-                    @foreach (var cat in categories)
-                    {
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   name="selectedCategories"
-                                   value="@cat.Id"
-                                   checked="@game.GameCategories.Any(gc => gc.CategoryId == cat.Id)" />
-                            <label class="form-check-label">
-                                @cat.Name
-                            </label>
+                        <div>
+                            <h5 class="mb-1">@game.Title</h5>
+
+                            <div class="text-muted small">
+                                @game.Developer?.Name
+                            </div>
+
+                            <div class="small mt-1">
+                                <strong>Price:</strong>
+                                @(game.Price?.ToString("0.00") ?? "N/A")
+                            </div>
+
+                            <div class="small">
+                                <strong>Status:</strong>
+                                @(game.IsPublished ? "Published" : "Hidden")
+                            </div>
                         </div>
-                    }
-                </td>
 
-                <td>
-                    <input name="Price"
-                           value="@game.Price?.ToString("0.00", CultureInfo.InvariantCulture)"
-                           class="form-control" />
-                </td>
-
-                <td>
-                    <select name="IsPublished" class="form-select">
-                        <option value="true" selected="@game.IsPublished">Yes</option>
-                        <option value="false" selected="@(game.IsPublished == false)">No</option>
-                    </select>
-                </td>
-
-                <td>
-                    <div class="d-flex flex-column gap-2 align-items-start">
-                        <button type="submit"
-                                class="btn btn-sm btn-success">
-                            Save
-                        </button>
-
-                        <button type="submit"
-                                class="btn btn-sm btn-danger"
-                                formaction="@Url.Action("Delete")"
-                                formmethod="post"
-                                onclick="return confirm('Delete this game?');">
-                            Delete
-                        </button>
                     </div>
-                </td>
-                </form>
-            </tr>
-        }
-    </tbody>
-</table>
+
+                    <div class="d-flex gap-2">
+
+                        <button class="btn btn-sm btn-dark"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#edit-@game.Id">
+                            Edit
+                        </button>
+
+                        <form asp-action="Delete"
+                              method="post"
+                              onsubmit="return confirm('Delete this game?');">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="Id"
+                                   value="@game.Id" />
+
+                            <button class="btn btn-sm btn-danger">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="collapse mt-4"
+                     id="edit-@game.Id">
+
+                    <form asp-action="Edit"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="Id"
+                               value="@game.Id" />
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Title</label>
+
+                                <input name="Title"
+                                       value="@game.Title"
+                                       class="form-control" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Price</label>
+
+                                <input name="Price"
+                                       value="@game.Price?.ToString("0.00", CultureInfo.InvariantCulture)"
+                                       class="form-control" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Published</label>
+
+                                <select name="IsPublished"
+                                        class="form-select">
+
+                                    <option value="true"
+                                            selected="@game.IsPublished">
+                                        Yes
+                                    </option>
+
+                                    <option value="false"
+                                            selected="@(game.IsPublished == false)">
+                                        No
+                                    </option>
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Developer</label>
+
+                                <select name="DeveloperId"
+                                        class="form-select">
+
+                                    @foreach (var dev in developers)
+                                    {
+                                        <option value="@dev.Id"
+                                                selected="@(dev.Id == game.DeveloperId)">
+                                            @dev.Name
+                                        </option>
+                                    }
+
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+
+                                <label class="form-label">
+                                    Categories
+                                </label>
+
+                                <div class="row">
+
+                                    @foreach (var cat in categories)
+                                    {
+                                        <div class="col-md-3">
+
+                                            <div class="form-check">
+
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="selectedCategories"
+                                                       value="@cat.Id"
+                                                       checked="@game.GameCategories.Any(gc => gc.CategoryId == cat.Id)" />
+
+                                                <label class="form-check-label">
+                                                    @cat.Name
+                                                </label>
+
+                                            </div>
+
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <button type="submit"
+                                        class="btn btn-success">
+                                    Save Changes
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@i">
+                        @i
+                    </a>
+
+                </li>
+            }
+
+        </ul>
+
+    </nav>
+}

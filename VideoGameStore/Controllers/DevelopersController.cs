@@ -16,9 +16,26 @@ namespace VideoGameStore.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var developers = await _context.Developers.ToListAsync();
+            const int pageSize = 10;
+
+            var query = _context.Developers
+                .OrderBy(d => d.Name)
+                .AsQueryable();
+
+            var totalDevelopers = await query.CountAsync();
+
+            var developers = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+
+            ViewBag.TotalPages =
+                (int)Math.Ceiling(totalDevelopers / (double)pageSize);
+
             return View(developers);
         }
 
