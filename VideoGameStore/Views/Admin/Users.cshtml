@@ -1,0 +1,135 @@
+﻿@model IEnumerable<VideoGameStore.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Manage Users</h1>
+
+        <p class="text-muted mb-0">
+            Moderate player accounts and platform access.
+        </p>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th style="width: 180px;">Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+
+                            <td class="fw-semibold">
+                                @(user.Email ?? user.UserName)
+                            </td>
+
+                            <td>
+                                @if (user.IsBanned)
+                                {
+                                    <span class="badge bg-danger">
+                                        Banned
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+
+                                @if (user.IsBanned)
+                                {
+                                    <form asp-action="UnbanUser"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@user.Id" />
+
+                                        <button class="btn btn-success btn-sm">
+                                            Unban
+                                        </button>
+
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="BanUser"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@user.Id" />
+
+                                        <button class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Ban this user?');">
+                                            Ban
+                                        </button>
+
+                                    </form>
+                                }
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+
+                    <a class="page-link"
+                       asp-action="Users"
+                       asp-route-page="@i">
+                        @i
+                    </a>
+
+                </li>
+            }
+
+        </ul>
+
+    </nav>
+}

@@ -13,10 +13,12 @@ namespace VideoGameStore.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -76,6 +78,63 @@ namespace VideoGameStore.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(ReviewReports));
+        }
+
+        public async Task<IActionResult> Users(int page = 1)
+        {
+            const int pageSize = 10;
+
+            var query = _userManager.Users
+                .OrderBy(u => u.Email)
+                .AsQueryable();
+
+            var totalUsers = await query.CountAsync();
+
+            var users = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+
+            ViewBag.TotalPages =
+                (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            return View(users);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BanUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user != null)
+            {
+                user.IsBanned = true;
+
+                await _userManager.UpdateAsync(user);
+            }
+
+            return RedirectToAction(nameof(Users));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnbanUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user != null)
+            {
+                user.IsBanned = false;
+
+                await _userManager.UpdateAsync(user);
+            }
+
+            return RedirectToAction(nameof(Users));
         }
     }
 }

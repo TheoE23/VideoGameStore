@@ -7,5 +7,6 @@ namespace VideoGameStore.Models
     {
         [Required]
         public string Name { get; set; } = "";
+        public bool IsBanned { get; set; }
     }
 }
