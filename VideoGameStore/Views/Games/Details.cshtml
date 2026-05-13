@@ -70,14 +70,31 @@
                 }
                 else if (Model.Game.Price.HasValue)
                 {
-                    <form asp-controller="Payments" asp-action="CreateOrder" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="gameId" value="@Model.Game.Id" />
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <form asp-controller="Payments"
+                              asp-action="CreateOrder"
+                              method="post">
 
-                        <button class="btn btn-success">
-                            Buy for $@Model.Game.Price.Value.ToString("0.00")
-                        </button>
-                    </form>
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="gameId"
+                                   value="@Model.Game.Id" />
+
+                            <button class="btn btn-success">
+                                Buy for $@Model.Game.Price.Value.ToString("0.00")
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-area="Identity"
+                           asp-page="/Account/Login"
+                           class="btn btn-outline-dark btn-lg">
+                            Log in to Purchase
+                        </a>
+                    }
                 }
                 else
                 {
