@@ -39,70 +39,65 @@
             </div>
         }
 
-        <div class="card-body">
-
-            
-
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Developer:</strong> @Model.Game.Developer?.Name</p>
-                    <p>
-                        <strong>Categories:</strong>
-                        @string.Join(", ", Model.Game.GameCategories.Select(gc => gc.Category.Name))
-                    </p>
-                </div>
-
-                <div class="col-md-6 text-md-end">
-                    @if (Model.Game.Price.HasValue)
-                    {
-                        <h4 class="text-success">$@Model.Game.Price.Value.ToString("0.00")</h4>
-                    }
-                    else
-                    {
-                        <h4 class="text-muted">Free</h4>
-                    }
-                </div>
-                @if (alreadyOwned)
-                {
-                    <div class="alert alert-success mt-2">
-                        You already own this game.
-                    </div>
-                }
-                else if (Model.Game.Price.HasValue)
-                {
-                    @if (User.Identity?.IsAuthenticated ?? false)
-                    {
-                        <form asp-controller="Payments"
-                              asp-action="CreateOrder"
-                              method="post">
-
-                            @Html.AntiForgeryToken()
-
-                            <input type="hidden"
-                                   name="gameId"
-                                   value="@Model.Game.Id" />
-
-                            <button class="btn btn-success">
-                                Buy for $@Model.Game.Price.Value.ToString("0.00")
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <a asp-area="Identity"
-                           asp-page="/Account/Login"
-                           class="btn btn-outline-dark btn-lg">
-                            Log in to Purchase
-                        </a>
-                    }
-                }
-                else
-                {
-                    <p class="text-muted">Not available for purchase</p>
-                }
+        @if (alreadyOwned)
+        {
+            <div class="alert alert-success mt-2">
+                You already own this game.
             </div>
+        }
+        else if (Model.Game.Price.HasValue)
+        {
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="d-flex gap-2 mt-3">
 
-        </div>
+                    <form asp-controller="Payments"
+                          asp-action="CreateOrder"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="gameId"
+                               value="@Model.Game.Id" />
+
+                        <button class="btn btn-success">
+                            Buy for $@Model.Game.Price.Value.ToString("0.00")
+                        </button>
+
+                    </form>
+
+                    <form asp-controller="Cart"
+                          asp-action="Add"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="gameId"
+                               value="@Model.Game.Id" />
+
+                        <button class="btn btn-outline-dark">
+                            Add to Cart
+                        </button>
+
+                    </form>
+
+                </div>
+            }
+            else
+            {
+                <a asp-area="Identity"
+                   asp-page="/Account/Login"
+                   class="btn btn-outline-dark btn-lg">
+                    Log in to Purchase
+                </a>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Not available for purchase</p>
+        }
     </div>
 
     <div class="card shadow-sm mb-4">

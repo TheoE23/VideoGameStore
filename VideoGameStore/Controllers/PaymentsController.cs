@@ -52,11 +52,41 @@ namespace VideoGameStore.Controllers
             return Redirect(approvalUrl);
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateCartOrder(decimal total)
+        {
+            var returnUrl = Url.Action(
+                "CaptureCartOrder",
+                "Payments",
+                null,
+                Request.Scheme);
+
+            var cancelUrl = Url.Action(
+                "Cancel",
+                "Payments",
+                null,
+                Request.Scheme);
+
+            var approvalUrl = await _paymentService.CreateOrderAsync(
+                total,
+                returnUrl,
+                cancelUrl
+            );
+
+            return Redirect(approvalUrl);
+        }
+
         public async Task<IActionResult> Success(int gameId)
         {
             var game = await _context.Games.FindAsync(gameId);
 
             return View(game);
+        }
+
+        public IActionResult CartSuccess()
+        {
+            return View();
         }
 
         public async Task<IActionResult> CaptureOrder(string token, int gameId)
@@ -85,6 +115,41 @@ namespace VideoGameStore.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> CaptureCartOrder(string token)
+        {
+            var success = await _paymentService.CaptureOrderAsync(token);
+
+            if (!success)
+                return BadRequest("Payment failed");
+
+            var userId = _userManager.GetUserId(User);
+
+            var cartItems = await _context.CartItems
+                .Include(c => c.Game)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            foreach (var item in cartItems)
+            {
+                var purchase = new Purchase
+                {
+                    GameId = item.GameId,
+                    UserId = userId,
+                    Price = item.Game.Price ?? 0,
+                    PayPalOrderId = token
+                };
+
+                _context.Purchases.Add(purchase);
+            }
+
+            _context.CartItems.RemoveRange(cartItems);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("CartSuccess");
+        }
+
+        [Authorize]
         public async Task<IActionResult> MyPurchases()
         {
             var userId = _userManager.GetUserId(User);
@@ -104,6 +169,28 @@ namespace VideoGameStore.Controllers
         public IActionResult Cancel()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CheckoutCart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var cartItems = await _context.CartItems
+                .Include(c => c.Game)
+                .Where(c => c.UserId == user!.Id)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                return RedirectToAction("Index", "Cart");
+            }
+
+            decimal total = cartItems.Sum(c => c.Game.Price ?? 0);
+
+            return await CreateCartOrder(total);
         }
     }
 }

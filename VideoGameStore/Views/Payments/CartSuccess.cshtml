@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Purchase Successful";
+}
+
+<div class="container py-5">
+
+    <div class="card shadow-sm border-0 rounded-4 p-5 text-center">
+
+        <h1 class="text-success mb-3">
+            Purchase Successful
+        </h1>
+
+        <p class="text-muted mb-4">
+            Your games have been added to your library.
+        </p>
+
+        <div class="d-flex justify-content-center gap-3">
+
+            <a asp-controller="Payments"
+               asp-action="MyPurchases"
+               class="btn btn-dark">
+                Go to Library
+            </a>
+
+            <a asp-controller="Games"
+               asp-action="Public"
+               class="btn btn-outline-secondary">
+                Continue Shopping
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
